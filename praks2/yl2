@@ -1,0 +1,32 @@
+
+# Skript, mis kuvab jooksva kuupäeva, kellaaja ja kalendriinfo
+# Kuvame tänase kuupäeva ja kellaaja
+echo "Tänane kuupäev ja kellaaeg:"
+date +"%d.%m.%Y %H:%M:%S"
+
+# Kuvame jooksva kalendrikuu
+echo -e "\nJooksev kalendrikuu:"
+cal
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
