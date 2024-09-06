@@ -4,8 +4,10 @@
 #Valjastame tere ilma reavahetuseta
 echo -n "Tere, "
 
-#Leiame kasutajanime
-username=$(whoami)
+#Tekitame kasutajanime, mis kuvatakse suure tahega
+kasutajanimi=$(whoami)
+echo -n "$(echo ${kasutajanimi^})"
+
 #Valjastame kasutaja nime ilma reavahetuseta
 echo -n "$username"
 
