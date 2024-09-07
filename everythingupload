@@ -19,6 +19,3 @@ git commit -m "Automated upload of script from $(basename "$current_dir")"
 git push -uf git@github.com:Adrian69420N/skriptimine.git master
 
 echo "Script uploaded to GitHub successfully from $current_dir"
-
-
-

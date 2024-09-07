@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Ask for the directory to upload from
+read -p "Enter the directory to upload from: " upload_dir
+
+# Check if the specified directory exists
+if [ ! -d "$upload_dir" ]; then
+    echo "The specified directory does not exist."
+    exit 1
+fi
+
+# Change to the specified directory
+cd "$upload_dir" || exit
+
+# Check if the current directory is a git repository
+if [ ! -d ".git" ]; then
+    echo "This directory is not a git repository. Please initialize a git repository first."
+    exit 1
+fi
+
+# Ask for the file to upload
+read -p "Enter the file to upload (with extension): " file_name
+
+# Check if the specified file exists in the directory
+if [ ! -f "$file_name" ]; then
+    echo "The specified file does not exist in the directory."
+    exit 1
+fi
+
+# Ask for the commit message
+read -p "Enter the commit message: " commit_message
+
+# Add the specified file to git
+git add "$file_name"
+
+# Commit the changes
+git commit -m "$commit_message"
+
+# Push to GitHub using the specified folder and branch
+git push -uf git@github.com:Adrian69420N/skriptimine.git master
+
+echo "File '$file_name' uploaded to GitHub successfully from $upload_dir"
