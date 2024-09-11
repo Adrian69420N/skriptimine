@@ -1,12 +1,20 @@
+#!/bin/bash
+
 # Function to display folders and allow user to select one
 function select_folder() {
-    echo "Available folders in the skriptimine directory:"
-    for dir in */; do
-        echo "$dir"
+    echo "Available folders in the current directory:"
+    
+    # List directories only (including hidden directories)
+    select dir in */; do
+        if [ -d "$dir" ]; then
+            selected_folder="$dir"
+            break
+        else
+            echo "Invalid selection. Please try again."
+        fi
     done
 
-    read -p "Enter the folder you want to upload from: " selected_folder
-
+    # Check if the selected folder exists
     if [ ! -d "$selected_folder" ]; then
         echo "The specified folder does not exist."
         exit 1
@@ -22,7 +30,7 @@ if [ ! -d ".git" ]; then
     exit 1
 fi
 
-# Ask for the directory to upload from
+# Call the folder selection function
 select_folder
 
 # List files in the selected folder
@@ -32,7 +40,7 @@ ls
 # Ask for the file to upload
 read -p "Enter the file to upload (with extension): " file_name
 
-# Check if the specified file exists in the directory
+# Check if the specified file exists
 if [ ! -f "$file_name" ]; then
     echo "The specified file does not exist in the directory."
     exit 1
@@ -41,8 +49,8 @@ fi
 # Ask for the commit message
 read -p "Enter the commit message: " commit_message
 
-# Stage the specified file for commit using the correct path
-git add "$selected_folder/$file_name"
+# Stage the specified file for commit (use relative path)
+git add "$file_name"
 
 # Check if there are changes to commit
 if ! git diff --cached --quiet; then
@@ -53,7 +61,7 @@ else
     exit 1
 fi
 
-# Push to GitHub using the specified folder and branch
-git push -uf origin master
+# Push to GitHub (assuming you're pushing to the master branch)
+git push -uf skriptimine master
 
 echo "File '$file_name' uploaded to GitHub successfully from '$selected_folder'."
