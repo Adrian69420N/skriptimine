@@ -1,13 +1,16 @@
 #!/bin/bash
 
-# Function to display folders and allow user to select one
+# Function to display folders and allow user to select one by number or name
 function select_folder() {
-    echo "Available folders in the current directory:"
+    echo "Available folders in the current directory (or type 'exit' to quit):"
     
     # List directories only (including hidden directories)
     select dir in */; do
-        if [ -d "$dir" ]; then
+        if [ -n "$dir" ]; then
             selected_folder="$dir"
+            break
+        elif [[ "$REPLY" =~ ^[0-9]+$ ]] && [ "$REPLY" -le "${#dirs[@]}" ]; then
+            selected_folder="${dirs[$((REPLY - 1))]}"
             break
         else
             echo "Invalid selection. Please try again."
@@ -24,6 +27,29 @@ function select_folder() {
     cd "$selected_folder" || exit
 }
 
+# Function to display files and allow user to select one by number or name
+function select_file() {
+    echo "Files in '$selected_folder':"
+    files=(*)
+    for i in "${!files[@]}"; do
+        echo "$((i + 1)): ${files[i]}"
+    done
+
+    while true; do
+        read -p "Enter the number of the file to upload or the file name: " file_input
+
+        if [[ "$file_input" =~ ^[0-9]+$ ]] && [ "$file_input" -ge 1 ] && [ "$file_input" -le "${#files[@]}" ]; then
+            file_name="${files[$((file_input - 1))]}"
+            break
+        elif [[ " ${files[@]} " =~ " $file_input " ]]; then
+            file_name="$file_input"
+            break
+        else
+            echo "Invalid file selection. Please try again."
+        fi
+    done
+}
+
 # Check if the current directory is a git repository
 if [ ! -d ".git" ]; then
     echo "This script must be run from the root of the git repository."
@@ -33,18 +59,8 @@ fi
 # Call the folder selection function
 select_folder
 
-# List files in the selected folder
-echo "Files in '$selected_folder':"
-ls
-
-# Ask for the file to upload
-read -p "Enter the file to upload (with extension): " file_name
-
-# Check if the specified file exists
-if [ ! -f "$file_name" ]; then
-    echo "The specified file does not exist in the directory."
-    exit 1
-fi
+# Call the file selection function
+select_file
 
 # Ask for the commit message
 read -p "Enter the commit message: " commit_message
@@ -62,6 +78,6 @@ else
 fi
 
 # Push to GitHub (assuming you're pushing to the master branch)
-git push -uf skriptimine master
+git push -uf origin master
 
 echo "File '$file_name' uploaded to GitHub successfully from '$selected_folder'."
