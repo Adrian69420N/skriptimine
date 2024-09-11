@@ -1,16 +1,26 @@
-#!/bin/bash
+# Function to display folders and allow user to select one
+function select_folder() {
+    echo "Available folders in the skriptimine directory:"
+    # List directories in the current directory
+    for dir in */; do
+        echo "$dir"
+    done
+
+    # Ask user to select a folder
+    read -p "Enter the folder you want to upload from: " selected_folder
+
+    # Check if the selected folder exists
+    if [ ! -d "$selected_folder" ]; then
+        echo "The specified folder does not exist."
+        exit 1
+    fi
+
+    # Change to the selected folder
+    cd "$selected_folder" || exit
+}
 
 # Ask for the directory to upload from
-read -p "Enter the directory to upload from: " upload_dir
-
-# Check if the specified directory exists
-if [ ! -d "$upload_dir" ]; then
-    echo "The specified directory does not exist."
-    exit 1
-fi
-
-# Change to the specified directory
-cd "$upload_dir" || exit
+select_folder
 
 # Check if the current directory is a git repository
 if [ ! -d ".git" ]; then
@@ -40,3 +50,5 @@ git commit -m "$commit_message"
 git push -uf git@github.com:Adrian69420N/skriptimine.git master
 
 echo "File '$file_name' uploaded to GitHub successfully from $upload_dir"
+
+
