@@ -1,15 +1,12 @@
 # Function to display folders and allow user to select one
 function select_folder() {
     echo "Available folders in the skriptimine directory:"
-    # List directories in the current directory
     for dir in */; do
         echo "$dir"
     done
 
-    # Ask user to select a folder
     read -p "Enter the folder you want to upload from: " selected_folder
 
-    # Check if the selected folder exists
     if [ ! -d "$selected_folder" ]; then
         echo "The specified folder does not exist."
         exit 1
@@ -28,6 +25,10 @@ fi
 # Ask for the directory to upload from
 select_folder
 
+# List files in the selected folder
+echo "Files in '$selected_folder':"
+ls
+
 # Ask for the file to upload
 read -p "Enter the file to upload (with extension): " file_name
 
@@ -40,17 +41,19 @@ fi
 # Ask for the commit message
 read -p "Enter the commit message: " commit_message
 
-# Add the specified file to git using the relative path
-git add "$file_name"
+# Stage the specified file for commit using the correct path
+git add "$selected_folder/$file_name"
 
-# Commit the changes
-git commit -m "$commit_message"
+# Check if there are changes to commit
+if ! git diff --cached --quiet; then
+    # Commit the changes
+    git commit -m "$commit_message"
+else
+    echo "No changes to commit."
+    exit 1
+fi
 
 # Push to GitHub using the specified folder and branch
 git push -uf origin master
 
-echo "File '$file_name' uploaded to GitHub successfully from $selected_folder"
-
-
-
-
+echo "File '$file_name' uploaded to GitHub successfully from '$selected_folder'."
