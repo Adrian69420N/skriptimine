@@ -4,24 +4,30 @@
 function select_folder() {
     echo "Available folders in the current directory (or type 'exit' to quit):"
     
-    # List directories only (including hidden directories)
-    select dir in */; do
-        if [ -n "$dir" ]; then
-            selected_folder="$dir"
+    # List directories only
+    dirs=(*)
+    for i in "${!dirs[@]}"; do
+        echo "$((i + 1)): ${dirs[i]}"
+    done
+
+    while true; do
+        read -p "Select a folder by number or name: " folder_input
+
+        # Check if input is a number
+        if [[ "$folder_input" =~ ^[0-9]+$ ]] && [ "$folder_input" -ge 1 ] && [ "$folder_input" -le "${#dirs[@]}" ]; then
+            selected_folder="${dirs[$((folder_input - 1))]}"
             break
-        elif [[ "$REPLY" =~ ^[0-9]+$ ]] && [ "$REPLY" -le "${#dirs[@]}" ]; then
-            selected_folder="${dirs[$((REPLY - 1))]}"
+        # Check if input is a valid folder name
+        elif [[ " ${dirs[@]} " =~ " $folder_input " ]]; then
+            selected_folder="$folder_input"
             break
+        elif [[ "$folder_input" == "exit" ]]; then
+            echo "Exiting the script."
+            exit 0
         else
             echo "Invalid selection. Please try again."
         fi
     done
-
-    # Check if the selected folder exists
-    if [ ! -d "$selected_folder" ]; then
-        echo "The specified folder does not exist."
-        exit 1
-    fi
 
     # Change to the selected folder
     cd "$selected_folder" || exit
@@ -38,9 +44,11 @@ function select_file() {
     while true; do
         read -p "Enter the number of the file to upload or the file name: " file_input
 
+        # Check if input is a number
         if [[ "$file_input" =~ ^[0-9]+$ ]] && [ "$file_input" -ge 1 ] && [ "$file_input" -le "${#files[@]}" ]; then
             file_name="${files[$((file_input - 1))]}"
             break
+        # Check if input is a valid file name
         elif [[ " ${files[@]} " =~ " $file_input " ]]; then
             file_name="$file_input"
             break
