@@ -19,14 +19,14 @@ function select_folder() {
     cd "$selected_folder" || exit
 }
 
-# Ask for the directory to upload from
-select_folder
-
 # Check if the current directory is a git repository
 if [ ! -d ".git" ]; then
-    echo "This directory is not a git repository. Please initialize a git repository first."
+    echo "This script must be run from the root of the git repository."
     exit 1
 fi
+
+# Ask for the directory to upload from
+select_folder
 
 # Ask for the file to upload
 read -p "Enter the file to upload (with extension): " file_name
@@ -40,15 +40,17 @@ fi
 # Ask for the commit message
 read -p "Enter the commit message: " commit_message
 
-# Add the specified file to git
+# Add the specified file to git using the relative path
 git add "$file_name"
 
 # Commit the changes
 git commit -m "$commit_message"
 
 # Push to GitHub using the specified folder and branch
-git push -uf git@github.com:Adrian69420N/skriptimine.git master
+git push -uf origin master
 
-echo "File '$file_name' uploaded to GitHub successfully from $upload_dir"
+echo "File '$file_name' uploaded to GitHub successfully from $selected_folder"
+
+
 
 
