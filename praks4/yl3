@@ -1,0 +1,11 @@
+#!/bin/bash
+
+osch=$1
+
+if [[ "$osch" == "1" ]]; then
+     echo "You Pick up Unix (Sun Os)"
+elif [[ "$osch" == "2" ]]; then
+     echo "You Pick up Linux (Red Hat)"
+else
+     echo "What you don't like Unix/Linux OS."
+fi
