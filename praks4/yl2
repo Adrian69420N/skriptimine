@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Küsi kasutajalt, mitu reisijat on grupis
+read -p "Sisesta reisijate arv: " reisijad
+
+# Küsi kasutajalt, mitu kohta on ühes bussis
+read -p "Sisesta kohtade arv bussis: " kohad
+
+# Arvuta, mitu bussi on vaja
+bussid=$(( (reisijad + kohad - 1) / kohad ))
+
+# Väljasta tulemus ekraanile
+echo "Kokku on vaja $bussid bussi"
