@@ -1,0 +1,16 @@
+#!/bin/bash
+# Skript, mis küsib kellaaega ja tervitab vastavalt
+
+read -p "Sisesta aja väärtus (tunnid 0-23): " kellaaeg
+
+if [ $kellaaeg -ge 6 -a $kellaaeg -lt 12 ]; then
+    echo "Tere hommikust"
+elif [ $kellaaeg -ge 12 -a $kellaaeg -lt 18 ]; then
+    echo "Tere päevast"
+elif [ $kellaaeg -ge 18 -a $kellaaeg -lt 24 ]; then
+    echo "Tere õhtust"
+elif [ $kellaaeg -ge 0 -a $kellaaeg -lt 6 ]; then
+    echo "Head ööd!"
+else
+    echo "Vigane kellaaeg, palun sisesta väärtus vahemikus 0-23"
+fi

@@ -1,0 +1,15 @@
+#!/bin/bash
+# Skript, mis tervitab kasutajat vastavalt kellaaegadele
+
+kasutaja_nimi=$(whoami)
+kellaaeg=$(date +%H)
+
+if [ $kellaaeg -ge 6 -a $kellaaeg -lt 12 ]; then
+    echo "Tere hommikust, $kasutaja_nimi!"
+elif [ $kellaaeg -ge 12 -a $kellaaeg -lt 18 ]; then
+    echo "Tere päevast, $kasutaja_nimi!"
+elif [ $kellaaeg -ge 18 -a $kellaaeg -lt 22 ]; then
+    echo "Tere õhtust, $kasutaja_nimi!"
+else
+    echo "Head ööd, $kasutaja_nimi!"
+fi
