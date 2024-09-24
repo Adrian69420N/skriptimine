@@ -1,18 +1,43 @@
+
+
 #!/bin/bash
+# Mitu reisijat
+echo -n "Mitu reisijat on kokku: "
+read mitu_reisijat
+# Mitu kohta
+echo -n "Mitu kohta on ühes bussis: "
+read mitu_kohti
+# Arvuta täisbussid ja mahajääjad
 
-# Küsi kasutajalt, mitu reisijat on grupis
-read -p "Sisesta reisijate arv: " reisijad
+taidetud_bussid=$((mitu_reisijat / mitu_kohti))
+maha_jaanud_reisijad=$((mitu_reisijat % mitu_kohti))
 
-# Küsi kasutajalt, mitu kohta on ühes bussis
-read -p "Sisesta kohtade arv ühes bussis: " kohad
+if [ $taidetud_bussid -eq 0 ] && [ $maha_jaanud_reisijad -gt 0 ]; then
+    taidetud_bussid=1
+    maha_jaanud_reisijad=0
+fi
 
-# Arvuta, mitu bussi on täielikult täidetud
-taidetud_bussid=$(expr $reisijad / $kohad)
+# Funktsioon, mis ütleb, kui palju kohti jääb üle
+function kohti_yksikute_arv {
+    if [ $mitu_kohti -gt $mitu_reisijat ]; then
+        kohti_yli=$((mitu_kohti - mitu_reisijat))
+        echo "Bussis jääb üle $kohti_yli kohta."
+    fi
+}
 
-# Arvuta, mitu reisijat jääb üle (ei mahu täielikult bussidesse)
-ulejaanud_reisijad=$(expr $reisijad % $kohad)
+# Väljastame vastused uuele reale
+echo "Busse täideti täielikult: $taidetud_bussid"
+if [ $maha_jaanud_reisijad -gt 0 ]; then
+    echo "Maha jääb $maha_jaanud_reisijad reisijat"
+fi
+kohti_yksikute_arv
 
-# Väljastame tulemuse ekraanile
-echo "Täielikult täidetud busse: $taidetud_bussid"
-echo "Ülejäänud reisijaid: $ulejaanud_reisijad"
+
+
+
+
+
+
+
+
 
