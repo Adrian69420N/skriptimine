@@ -42,6 +42,12 @@ function select_folders() {
     done
 }
 
+# Function to upload all files in the selected folder
+function upload_all_files() {
+    echo "Uploading all files in '$selected_folder'..."
+    git add .
+}
+
 # Function to display files and allow user to select one or more by number or name
 function select_files() {
     echo "Files in '$selected_folder':"
@@ -52,7 +58,12 @@ function select_files() {
 
     selected_files=()
     while true; do
-        read -p "Enter the number of the files to upload or the file names (comma-separated for multiple): " file_input
+        read -p "Enter the number of the files to upload or the file names (comma-separated for multiple, 'all' to upload all): " file_input
+
+        if [[ "$file_input" == "all" ]]; then
+            selected_files=("${files[@]}")
+            break
+        fi
 
         IFS=',' read -ra inputs <<< "$file_input"
         valid=true
@@ -87,16 +98,22 @@ select_folders
 for selected_folder in "${selected_folders[@]}"; do
     cd "$selected_folder" || exit
 
-    # Call the file selection function
-    select_files
+    # Ask if the user wants to upload all files
+    read -p "Do you want to upload all files in '$selected_folder'? (y/n): " upload_all
+    if [[ "$upload_all" == "y" ]]; then
+        upload_all_files
+    else
+        # Call the file selection function
+        select_files
+
+        # Stage the specified files for commit (use relative path)
+        for file_name in "${selected_files[@]}"; do
+            git add "$file_name"
+        done
+    fi
 
     # Ask for the commit message
     read -p "Enter the commit message: " commit_message
-
-    # Stage the specified files for commit (use relative path)
-    for file_name in "${selected_files[@]}"; do
-        git add "$file_name"
-    done
 
     # Check if there are changes to commit
     if ! git diff --cached --quiet; then
