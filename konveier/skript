@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# Kontrollime, kas kasutaja on sisestanud failinime
+if [ $# -ne 1 ]; then
+    echo "Kasutamine: $0 <inimesed_fail>"
+    exit 1
+fi
+
+# Määrame sisend- ja väljundfailide teed
+input_file="$1"        # Sisendfail, kus on inimeste andmed
+output_dir="./konveier" # Kataloog, kuhu salvestatakse väljundfailid
+first_names_file="$output_dir/eesnimed.txt"    # Fail, kuhu salvestatakse eesnimed
+last_names_file="$output_dir/perenimed.txt"    # Fail, kuhu salvestatakse perekonnanimed
+domains_file="$output_dir/domeenid.txt"        # Fail, kuhu salvestatakse domeenid
+usernames_file="$output_dir/kasutajad.txt"     # Fail, kuhu salvestatakse kasutajatunnused
+emails_file="$output_dir/meilid.txt"           # Fail, kuhu salvestatakse e-mailid
+
+# Loome väljundi katalooge, kui neid ei eksisteeri
+mkdir -p "$output_dir"
+
+# 6. samm: Lõika eesnimed ja salvesta need faili
+cut -d',' -f2 "$input_file" | tr '[:upper:]' '[:lower:]' | sed 's/^[ \t]*//;s/[ \t]*$//' > "$first_names_file"
+
+# 7. samm: Lõika perekonnanimed ja salvesta need faili
+cut -d',' -f1 "$input_file" | tr '[:upper:]' '[:lower:]' | sed 's/^[ \t]*//;s/[ \t]*$//' > "$last_names_file"
+
+# 8. samm: Lõika domeenid ja salvesta need faili
+cut -d'-' -f2 "$input_file" | sed 's/^[ \t]*//;s/[ \t]*$//' > "$domains_file"
+
+# 9. samm: Muuda eesnimed failis kõik tähed väikesteks
+tr '[:upper:]' '[:lower:]' < "$first_names_file" > "$first_names_file.tmp" && mv "$first_names_file.tmp" "$first_names_file"
+
+# 10. samm: Muuda perenimed failis kõik tähed väikesteks
+tr '[:upper:]' '[:lower:]' < "$last_names_file" > "$last_names_file.tmp" && mv "$last_names_file.tmp" "$last_names_file"
+
+# 11. samm: Loo kasutajate nimed kujul eesnimi.perenimi ja salvesta faili
+paste -d"." "$first_names_file" "$last_names_file" > "$usernames_file"
+
+# 12. samm: Loo e-mailid kujul eesnimi.perenimi@domeen ja salvesta faili
+paste -d"@" "$usernames_file" "$domains_file" > "$emails_file"
+
+# Kuvame loodud failide nimed
+echo "Eesnimed salvestatud faili: $first_names_file"
+echo "Perekonnanimed salvestatud faili: $last_names_file"
+echo "Domeenid salvestatud faili: $domains_file"
+echo "Kasutajatunnused salvestatud faili: $usernames_file"
+echo "E-mailid salvestatud faili: $emails_file"
+
+# Commit muudatused Git repositorysse (eeldusel, et oled Git repoga ühenduses)
+git add "$first_names_file" "$last_names_file" "$domains_file" "$usernames_file" "$emails_file"
+git commit -m "Genereeritud kasutajate andmed sisendfailist $input_file"
