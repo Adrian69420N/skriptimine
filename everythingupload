@@ -16,6 +16,6 @@ git add .
 git commit -m "Automaatne skripti ules laadimine kaustast $(basename "$current_dir")"
 
 # Push to GitHub using the specified folder and branch
-git push -uf git@github.com:Adrian69420N/powershell_skriptimine.git master
+git push -uf git@github.com:Adrian69420N/powershell_skriptimine master
 
 echo "Script uploaded to GitHub successfully from $current_dir"
