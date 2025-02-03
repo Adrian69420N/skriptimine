@@ -1,21 +1,30 @@
 #!/bin/bash
 
-# Get the current directory
+# Määrame kausta, kus käib töö
 current_dir=$(pwd)
 
-# Check if the current directory is a git repository
+# Kontrollime, kas antud kaust on Git repoga kaust
 if [ ! -d ".git" ]; then
-    echo "This directory is not a git repository. Please initialize a git repository first."
+    echo "See kaust ei ole Git repoga kaust. Palun initsialiseeri Git repo."
     exit 1
 fi
 
-# Add all changes to git
+# Kontrollige, kas git on installitud
+if ! command -v git &> /dev/null
+then
+    echo "Git ei ole installitud."
+    exit 1
+fi
+
+# Lisame kõik muudatused Git-i
 git add .
 
-# Commit the changes
-git commit -m "Automaatne skripti ules laadimine kaustast $(basename "$current_dir")"
+# Teeme commit'i
+commitMessage="Automatiseeritud üleslaadimine skriptist $(basename "$current_dir")"
+git commit -m "$commitMessage"
 
-# Push to GitHub using the specified folder and branch
-git push -uf git@github.com:Adrian69420N/powershell_skriptimine master
+# Lükka muudatused GitHubi (kasutame SSH autentimist)
+repoUrl="git@github.com:Adrian69420N/skriptimine.git"
+git push -uf "$repoUrl" master
 
-echo "Script uploaded to GitHub successfully from $current_dir"
+echo "Skript üles laetud GitHubi edukalt kaustast $current_dir"
