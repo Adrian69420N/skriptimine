@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Get the current directory
+current_dir=$(pwd)
+
+# Check if the current directory is a git repository
+if [ ! -d ".git" ]; then
+    echo "This directory is not a git repository. Please initialize a git repository first."
+    exit 1
+fi
+
+# Add all changes to git
+git add .
+
+# Commit the changes
+git commit -m "Automaatne skripti ules laadimine kaustast $(basename "$current_dir")"
+
+# Push to GitHub using the specified folder and branch
+git push -uf git@github.com:Adrian69420N/powershell_skriptimine.git master
+
+echo "Script uploaded to GitHub successfully from $current_dir"
